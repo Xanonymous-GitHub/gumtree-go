@@ -33,7 +33,7 @@ func (p priorityQueue[E]) Size() int {
 	return p.heap.Size()
 }
 
-func NewPriorityList[E priorityQueueElementType](logger slog.Logger) PriorityQueue[E] {
+func NewPriorityQueue[E priorityQueueElementType](logger slog.Logger) PriorityQueue[E] {
 	return &priorityQueue[E]{
 		heap: NewMaxHeap[E](logger),
 	}
