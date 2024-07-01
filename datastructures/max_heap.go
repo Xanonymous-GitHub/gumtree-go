@@ -34,18 +34,6 @@ func (m *maxHeap[E]) IsEmpty() bool {
 	return m.heap.IsEmpty()
 }
 
-func (m *maxHeap[E]) swap(i, j int) {
-	m.heap.swap(i, j)
-}
-
-func (m *maxHeap[E]) up(childIdx int) {
-	m.heap.up(childIdx)
-}
-
-func (m *maxHeap[E]) down(parentIdx int) {
-	m.heap.down(parentIdx)
-}
-
 func NewMaxHeap[E maxHeapElementType](logger slog.Logger) MaxHeap[E] {
 	return &maxHeap[E]{
 		heap: NewBinaryHeap[E](Greater, logger),

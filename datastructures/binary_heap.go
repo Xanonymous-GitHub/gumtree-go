@@ -20,15 +20,6 @@ type BinaryHeap[E binaryHeapElementType] interface {
 
 	// IsEmpty returns the heap is empty or not.
 	IsEmpty() bool
-
-	// swap swaps the elements with indices i and j.
-	swap(i, j int)
-
-	// up moves the element at index `childIdx` up to its correct position.
-	up(childIdx int)
-
-	// down moves the element at index `parentIdx` down to its correct position.
-	down(parentIdx int)
 }
 
 type binaryHeapElementType interface {
@@ -79,10 +70,12 @@ func (b *binaryHeap[E]) IsEmpty() bool {
 	return len(b.elements) == 0
 }
 
+// swap swaps the elements with indices i and j.
 func (b *binaryHeap[E]) swap(i, j int) {
 	b.elements[i], b.elements[j] = b.elements[j], b.elements[i]
 }
 
+// up moves the element at index `childIdx` up to its correct position.
 func (b *binaryHeap[E]) up(childIdx int) {
 	if childIdx <= 0 {
 		return
@@ -97,6 +90,7 @@ func (b *binaryHeap[E]) up(childIdx int) {
 	b.up(parentIdx)
 }
 
+// down moves the element at index `parentIdx` down to its correct position.
 func (b *binaryHeap[E]) down(parentIdx int) {
 	leastIdx := parentIdx
 	lChildIdx := (parentIdx << 1) + 1
