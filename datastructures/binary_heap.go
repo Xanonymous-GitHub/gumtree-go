@@ -49,12 +49,12 @@ func Greater[E binaryHeapElementType](a, b E) bool {
 	return cmp.Less(b, a)
 }
 
-func (b binaryHeap[E]) Push(e E) {
+func (b *binaryHeap[E]) Push(e E) {
 	b.elements = append(b.elements, e)
 	b.up(len(b.elements) - 1)
 }
 
-func (b binaryHeap[E]) Pop() {
+func (b *binaryHeap[E]) Pop() {
 	size := len(b.elements)
 	if size <= 1 {
 		b.elements = make([]E, 0)
@@ -67,23 +67,23 @@ func (b binaryHeap[E]) Pop() {
 	b.down(0)
 }
 
-func (b binaryHeap[E]) Top() E {
+func (b *binaryHeap[E]) Top() E {
 	return b.elements[0]
 }
 
-func (b binaryHeap[E]) Size() int {
+func (b *binaryHeap[E]) Size() int {
 	return len(b.elements)
 }
 
-func (b binaryHeap[E]) IsEmpty() bool {
+func (b *binaryHeap[E]) IsEmpty() bool {
 	return len(b.elements) == 0
 }
 
-func (b binaryHeap[E]) swap(i, j int) {
+func (b *binaryHeap[E]) swap(i, j int) {
 	b.elements[i], b.elements[j] = b.elements[j], b.elements[i]
 }
 
-func (b binaryHeap[E]) up(childIdx int) {
+func (b *binaryHeap[E]) up(childIdx int) {
 	if childIdx <= 0 {
 		return
 	}
@@ -97,7 +97,7 @@ func (b binaryHeap[E]) up(childIdx int) {
 	b.up(parentIdx)
 }
 
-func (b binaryHeap[E]) down(parentIdx int) {
+func (b *binaryHeap[E]) down(parentIdx int) {
 	leastIdx := parentIdx
 	lChildIdx := (parentIdx << 1) + 1
 	rChildIdx := lChildIdx + 1

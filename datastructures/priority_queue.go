@@ -17,19 +17,19 @@ type priorityQueue[E priorityQueueElementType] struct {
 	heap MaxHeap[E]
 }
 
-func (p priorityQueue[E]) Push(e E) {
+func (p *priorityQueue[E]) Push(e E) {
 	p.heap.Push(e)
 }
 
-func (p priorityQueue[E]) Pop() {
+func (p *priorityQueue[E]) Pop() {
 	p.heap.Pop()
 }
 
-func (p priorityQueue[E]) Front() E {
+func (p *priorityQueue[E]) Front() E {
 	return p.heap.Top()
 }
 
-func (p priorityQueue[E]) Size() int {
+func (p *priorityQueue[E]) Size() int {
 	return p.heap.Size()
 }
 
