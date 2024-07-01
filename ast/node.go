@@ -23,7 +23,7 @@ type nodeParentInfo struct {
 	idxToParent int
 }
 
-func newNode(parentInfo nodeParentInfo, label NodeLabelType, value NodeValueType) (*Node, error) {
+func NewNode(parentInfo nodeParentInfo, label NodeLabelType, value NodeValueType) (*Node, error) {
 	newId, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func newNode(parentInfo nodeParentInfo, label NodeLabelType, value NodeValueType
 		idxToParent: -1,
 	}
 
-	err = updateParent(&newNode, parentInfo)
+	err = UpdateParent(&newNode, parentInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func newNode(parentInfo nodeParentInfo, label NodeLabelType, value NodeValueType
 	return &newNode, nil
 }
 
-func updateParent(n *Node, newParentInfo nodeParentInfo) error {
+func UpdateParent(n *Node, newParentInfo nodeParentInfo) error {
 	if newParentInfo.parent != nil {
 		if newParentInfo.idxToParent < 0 {
 			return fmt.Errorf("idxToParent should not be negative when parent is not nil")
@@ -75,13 +75,13 @@ func updateParent(n *Node, newParentInfo nodeParentInfo) error {
 	return nil
 }
 
-func destroySubtree(n *Node) {
+func DestroySubtree(n *Node) {
 	if n == nil {
 		panic("destroying node is nil")
 	}
 
 	for _, child := range n.Children {
-		destroySubtree(child)
+		DestroySubtree(child)
 		delete(n.Children, child.idxToParent)
 	}
 }

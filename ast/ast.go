@@ -45,7 +45,7 @@ type astConcrete struct {
 }
 
 func (a *astConcrete) Add(parent *Node, i int, label NodeLabelType, value NodeValueType) (*Node, error) {
-	newNode, err := newNode(nodeParentInfo{parent: parent, idxToParent: i}, label, value)
+	newNode, err := NewNode(nodeParentInfo{parent: parent, idxToParent: i}, label, value)
 	if err != nil {
 		a.logger.Error("error creating new node")
 		return nil, err
@@ -61,7 +61,7 @@ func (a *astConcrete) Add(parent *Node, i int, label NodeLabelType, value NodeVa
 }
 
 func (a *astConcrete) Move(n, newParent *Node, i int) error {
-	return updateParent(n, nodeParentInfo{parent: newParent, idxToParent: i})
+	return UpdateParent(n, nodeParentInfo{parent: newParent, idxToParent: i})
 }
 
 func (a *astConcrete) Delete(n *Node) error {
@@ -71,7 +71,7 @@ func (a *astConcrete) Delete(n *Node) error {
 		return fmt.Errorf(msg)
 	}
 
-	destroySubtree(n)
+	DestroySubtree(n)
 	delete(a.nodes, n.id)
 	return nil
 }
