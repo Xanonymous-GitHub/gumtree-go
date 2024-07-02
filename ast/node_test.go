@@ -6,6 +6,21 @@ import (
 	"testing"
 )
 
+func TestNewOrphanNode(t *testing.T) {
+	t.Run("TestNewOrphanNode", func(t *testing.T) {
+		newNode, err := ast.NewOrphanNode()
+		if err != nil {
+			t.Errorf("error creating new orphan node: %v", err)
+		}
+		if newNode == nil {
+			t.Error("newNode is nil")
+		}
+		if newNode.Parent != nil {
+			t.Errorf("newNode.Parent = %v, want nil", newNode.Parent)
+		}
+	})
+}
+
 func TestNewNode(t *testing.T) {
 	givenRootNode := ast.Node{
 		Label:    ast.NodeLabelType("root-label"),
@@ -56,8 +71,8 @@ func TestUpdateParent(t *testing.T) {
 		givenOldIdxToParent := 1
 		givenNewIdxToParent := 2
 
-		givenParentNode1, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "parent1-label", "parent1-value")
-		givenParentNode2, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "parent2-label", "parent2-value")
+		givenParentNode1, _ := ast.NewOrphanNode()
+		givenParentNode2, _ := ast.NewOrphanNode()
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: givenParentNode2, IdxToParent: givenNewIdxToParent}
 
@@ -84,7 +99,7 @@ func TestUpdateParent(t *testing.T) {
 		givenOldIdxToParent := 1
 		givenNewIdxToParent := -1
 
-		givenParentNode1, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "parent1-label", "parent1-value")
+		givenParentNode1, _ := ast.NewOrphanNode()
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: nil, IdxToParent: givenNewIdxToParent}
 
@@ -108,7 +123,7 @@ func TestUpdateParent(t *testing.T) {
 		givenOldIdxToParent := -1
 		givenNewIdxToParent := 1
 
-		givenParentNode1, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "parent1-label", "parent1-value")
+		givenParentNode1, _ := ast.NewOrphanNode()
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenNewIdxToParent}
 
@@ -151,8 +166,8 @@ func TestUpdateParent(t *testing.T) {
 		givenOldIdxToParent := 1
 		givenOccupiedIdxOfParent2 := 23
 
-		givenParentNode1, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "parent1-label", "parent1-value")
-		givenParentNode2, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "parent2-label", "parent2-value")
+		givenParentNode1, _ := ast.NewOrphanNode()
+		givenParentNode2, _ := ast.NewOrphanNode()
 		givenOccupationNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenParentNode2, IdxToParent: givenOccupiedIdxOfParent2}, "node3-label", "node3-value")
 
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
@@ -180,7 +195,7 @@ func TestUpdateParent(t *testing.T) {
 		givenOldIdxToParent := 1
 		givenNewIdxToParent := 999
 
-		givenParentNode1, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "parent1-label", "parent1-value")
+		givenParentNode1, _ := ast.NewOrphanNode()
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: nil, IdxToParent: givenNewIdxToParent}
 
@@ -204,7 +219,7 @@ func TestUpdateParent(t *testing.T) {
 		givenOldIdxToParent := 0
 		givenNewIdxToParent := -999
 
-		givenParentNode1, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "parent1-label", "parent1-value")
+		givenParentNode1, _ := ast.NewOrphanNode()
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenNewIdxToParent}
 
@@ -222,14 +237,14 @@ func TestDestroySubtree(t *testing.T) {
 	t.Run("TestDestroySubtree_no_children", func(t *testing.T) {
 		t.Parallel()
 
-		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenRootNode, _ := ast.NewOrphanNode()
 		givenRootNode.DestroySubtree()
 	})
 
 	t.Run("TestDestroySubtree_with_1_layer_children", func(t *testing.T) {
 		t.Parallel()
 
-		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenRootNode, _ := ast.NewOrphanNode()
 		givenChildrenNum := 18
 		for i := 0; i < givenChildrenNum; i++ {
 			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: givenRootNode, IdxToParent: i}, "child-label", "child-value")
@@ -243,7 +258,7 @@ func TestDestroySubtree(t *testing.T) {
 	t.Run("TestDestroySubtree_with_2_layers_children", func(t *testing.T) {
 		t.Parallel()
 
-		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenRootNode, _ := ast.NewOrphanNode()
 		givenChildrenNum := 8
 
 		firstLayerChildren := make([]*ast.Node, givenChildrenNum)
@@ -272,7 +287,7 @@ func TestNode_Height(t *testing.T) {
 	t.Run("TestNode_Height_no_children", func(t *testing.T) {
 		t.Parallel()
 
-		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenRootNode, _ := ast.NewOrphanNode()
 
 		if givenRootNode.Height() != 0 {
 			t.Errorf("givenRootNode.Height() = %d, want 0", givenRootNode.Height())
@@ -282,7 +297,7 @@ func TestNode_Height(t *testing.T) {
 	t.Run("TestNode_Height_with_1_layer_children", func(t *testing.T) {
 		t.Parallel()
 
-		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenRootNode, _ := ast.NewOrphanNode()
 		givenChildrenNum := 18
 		for i := 0; i < givenChildrenNum; i++ {
 			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: givenRootNode, IdxToParent: i}, "child-label", "child-value")
@@ -296,7 +311,7 @@ func TestNode_Height(t *testing.T) {
 	t.Run("TestNode_Height_with_2_layers_children", func(t *testing.T) {
 		t.Parallel()
 
-		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenRootNode, _ := ast.NewOrphanNode()
 		givenChildrenNum := 8
 
 		for i := 0; i < givenChildrenNum; i++ {
@@ -320,7 +335,7 @@ func TestNode_Degree(t *testing.T) {
 	t.Run("TestNode_Degree_no_children", func(t *testing.T) {
 		t.Parallel()
 
-		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenRootNode, _ := ast.NewOrphanNode()
 
 		if givenRootNode.Degree() != 0 {
 			t.Errorf("givenRootNode.Degree() = %d, want 0", givenRootNode.Degree())
@@ -330,7 +345,7 @@ func TestNode_Degree(t *testing.T) {
 	t.Run("TestNode_Degree_with_1_layer_children", func(t *testing.T) {
 		t.Parallel()
 
-		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenRootNode, _ := ast.NewOrphanNode()
 		givenChildrenNum := 18
 		for i := 0; i < givenChildrenNum; i++ {
 			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: givenRootNode, IdxToParent: i}, "child-label", "child-value")

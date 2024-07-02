@@ -51,6 +51,10 @@ func NewNode(parentInfo NodeParentInfo, label NodeLabelType, value NodeValueType
 	return &newNode, nil
 }
 
+func NewOrphanNode() (*Node, error) {
+	return NewNode(NodeParentInfo{Parent: nil, IdxToParent: -1}, "", "")
+}
+
 func (n *Node) UpdateParent(newParentInfo NodeParentInfo) error {
 	if newParentInfo.Parent != nil {
 		if newParentInfo.IdxToParent < 0 {
