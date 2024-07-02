@@ -85,3 +85,23 @@ func DestroySubtree(n *Node) {
 		delete(n.Children, child.idxToParent)
 	}
 }
+
+func (n *Node) Height() int {
+	if len(n.Children) == 0 {
+		return 0
+	}
+
+	maxHeight := 0
+	for _, child := range n.Children {
+		height := child.Height()
+		if height > maxHeight {
+			maxHeight = height
+		}
+	}
+
+	return 1 + maxHeight
+}
+
+func (n *Node) Degree() int {
+	return len(n.Children)
+}
