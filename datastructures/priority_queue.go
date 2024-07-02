@@ -1,40 +1,43 @@
 package datastructures
 
-import "log/slog"
+import (
+	"cmp"
+	"log/slog"
+)
 
-type PriorityQueue[E priorityQueueElementType] interface {
+type PriorityQueue[E priorityQueueElementType[P], P cmp.Ordered] interface {
 	Push(e E)
 	Pop()
 	Front() E
 	Size() int
 }
 
-type priorityQueueElementType interface {
-	maxHeapElementType
+type priorityQueueElementType[P cmp.Ordered] interface {
+	maxHeapElementType[P]
 }
 
-type priorityQueue[E priorityQueueElementType] struct {
-	heap MaxHeap[E]
+type priorityQueue[E priorityQueueElementType[P], P cmp.Ordered] struct {
+	heap MaxHeap[E, P]
 }
 
-func (p *priorityQueue[E]) Push(e E) {
+func (p *priorityQueue[E, P]) Push(e E) {
 	p.heap.Push(e)
 }
 
-func (p *priorityQueue[E]) Pop() {
+func (p *priorityQueue[E, P]) Pop() {
 	p.heap.Pop()
 }
 
-func (p *priorityQueue[E]) Front() E {
+func (p *priorityQueue[E, P]) Front() E {
 	return p.heap.Top()
 }
 
-func (p *priorityQueue[E]) Size() int {
+func (p *priorityQueue[E, P]) Size() int {
 	return p.heap.Size()
 }
 
-func NewPriorityQueue[E priorityQueueElementType](logger slog.Logger) PriorityQueue[E] {
-	return &priorityQueue[E]{
+func NewPriorityQueue[E priorityQueueElementType[P], P cmp.Ordered](logger slog.Logger) PriorityQueue[E, P] {
+	return &priorityQueue[E, P]{
 		heap: NewMaxHeap[E](logger),
 	}
 }
