@@ -2,6 +2,7 @@ package ast_test
 
 import (
 	"github.com/Xanonymous-GitHub/gumtree-go/ast"
+	"math/rand/v2"
 	"testing"
 )
 
@@ -263,6 +264,54 @@ func TestDestroySubtree(t *testing.T) {
 			if len(firstLayerChild.Children) != 0 {
 				t.Errorf("len(firstLayerChild.Children) = %d, want 0", len(firstLayerChild.Children))
 			}
+		}
+	})
+}
+
+func TestNode_Height(t *testing.T) {
+	t.Run("TestNode_Height_no_children", func(t *testing.T) {
+		t.Parallel()
+
+		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+
+		if givenRootNode.Height() != 0 {
+			t.Errorf("givenRootNode.Height() = %d, want 0", givenRootNode.Height())
+		}
+	})
+
+	t.Run("TestNode_Height_with_1_layer_children", func(t *testing.T) {
+		t.Parallel()
+
+		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenChildrenNum := 18
+		for i := 0; i < givenChildrenNum; i++ {
+			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: givenRootNode, IdxToParent: i}, "child-label", "child-value")
+		}
+
+		if givenRootNode.Height() != 1 {
+			t.Errorf("givenRootNode.Height() = %d, want 1", givenRootNode.Height())
+		}
+	})
+
+	t.Run("TestNode_Height_with_2_layers_children", func(t *testing.T) {
+		t.Parallel()
+
+		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenChildrenNum := 8
+
+		for i := 0; i < givenChildrenNum; i++ {
+			childNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenRootNode, IdxToParent: i}, "child-label", "child-value")
+
+			shouldHaveChildren := rand.IntN(2) == 0 || i == 0
+			if shouldHaveChildren {
+				for j := 0; j < givenChildrenNum; j++ {
+					_, _ = ast.NewNode(ast.NodeParentInfo{Parent: childNode, IdxToParent: j}, "grandchild-label", "grandchild-value")
+				}
+			}
+		}
+
+		if givenRootNode.Height() != 2 {
+			t.Errorf("givenRootNode.Height() = %d, want 2", givenRootNode.Height())
 		}
 	})
 }
