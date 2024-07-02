@@ -29,14 +29,16 @@ type binaryHeapElementType interface {
 type binaryHeap[E binaryHeapElementType] struct {
 	logger   slog.Logger
 	elements []E
-	lessFunc func(a, b E) bool
+	lessFunc LessFunc[E]
 }
 
-func Less[E binaryHeapElementType](a, b E) bool {
+type LessFunc[E cmp.Ordered] func(a, b E) bool
+
+func Less[E cmp.Ordered](a, b E) bool {
 	return cmp.Less(a, b)
 }
 
-func Greater[E binaryHeapElementType](a, b E) bool {
+func Greater[E cmp.Ordered](a, b E) bool {
 	return cmp.Less(b, a)
 }
 
@@ -111,7 +113,7 @@ func (b *binaryHeap[E]) down(parentIdx int) {
 }
 
 func NewBinaryHeap[E binaryHeapElementType](
-	lessFunc func(a, b E) bool,
+	lessFunc LessFunc[E],
 	logger slog.Logger,
 ) BinaryHeap[E] {
 	return &binaryHeap[E]{
