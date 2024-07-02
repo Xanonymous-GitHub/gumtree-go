@@ -315,3 +315,29 @@ func TestNode_Height(t *testing.T) {
 		}
 	})
 }
+
+func TestNode_Degree(t *testing.T) {
+	t.Run("TestNode_Degree_no_children", func(t *testing.T) {
+		t.Parallel()
+
+		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+
+		if givenRootNode.Degree() != 0 {
+			t.Errorf("givenRootNode.Degree() = %d, want 0", givenRootNode.Degree())
+		}
+	})
+
+	t.Run("TestNode_Degree_with_1_layer_children", func(t *testing.T) {
+		t.Parallel()
+
+		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenChildrenNum := 18
+		for i := 0; i < givenChildrenNum; i++ {
+			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: givenRootNode, IdxToParent: i}, "child-label", "child-value")
+		}
+
+		if givenRootNode.Degree() != givenChildrenNum {
+			t.Errorf("givenRootNode.Degree() = %d, want %d", givenRootNode.Degree(), givenChildrenNum)
+		}
+	})
+}
