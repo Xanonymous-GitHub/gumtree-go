@@ -14,16 +14,16 @@ type Node struct {
 	idxToParent int
 }
 
-type nodeParentInfo struct {
-	// The parent of a Node.
-	parent *Node
+type NodeParentInfo struct {
+	// The Parent of a Node.
+	Parent *Node
 
-	// The index of the Node in the parent's children map.
-	// If the parent is nil, this field is ignored.
-	idxToParent int
+	// The index of the Node in the Parent's children map.
+	// If the Parent is nil, this field is ignored.
+	IdxToParent int
 }
 
-func NewNode(parentInfo nodeParentInfo, label NodeLabelType, value NodeValueType) (*Node, error) {
+func NewNode(parentInfo NodeParentInfo, label NodeLabelType, value NodeValueType) (*Node, error) {
 	newId, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
@@ -51,26 +51,26 @@ func NewNode(parentInfo nodeParentInfo, label NodeLabelType, value NodeValueType
 	return &newNode, nil
 }
 
-func UpdateParent(n *Node, newParentInfo nodeParentInfo) error {
-	if newParentInfo.parent != nil {
-		if newParentInfo.idxToParent < 0 {
-			return fmt.Errorf("idxToParent should not be negative when parent is not nil")
+func UpdateParent(n *Node, newParentInfo NodeParentInfo) error {
+	if newParentInfo.Parent != nil {
+		if newParentInfo.IdxToParent < 0 {
+			return fmt.Errorf("IdxToParent should not be negative when Parent is not nil")
 		}
-		if _, ok := newParentInfo.parent.Children[newParentInfo.idxToParent]; ok {
-			return fmt.Errorf("new parent already has a child at index %d", newParentInfo.idxToParent)
+		if _, ok := newParentInfo.Parent.Children[newParentInfo.IdxToParent]; ok {
+			return fmt.Errorf("new Parent already has a child at index %d", newParentInfo.IdxToParent)
 		}
 
-		newParentInfo.parent.Children[newParentInfo.idxToParent] = n
-	} else if newParentInfo.idxToParent >= 0 {
-		return fmt.Errorf("idxToParent should be negative when parent is nil")
+		newParentInfo.Parent.Children[newParentInfo.IdxToParent] = n
+	} else if newParentInfo.IdxToParent >= 0 {
+		return fmt.Errorf("IdxToParent should be negative when Parent is nil")
 	}
 
 	if n.Parent != nil {
 		delete(n.Parent.Children, n.idxToParent)
 	}
 
-	n.Parent = newParentInfo.parent
-	n.idxToParent = newParentInfo.idxToParent
+	n.Parent = newParentInfo.Parent
+	n.idxToParent = newParentInfo.IdxToParent
 
 	return nil
 }
