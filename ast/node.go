@@ -109,3 +109,7 @@ func (n *Node) Height() int {
 func (n *Node) Degree() int {
 	return len(n.Children)
 }
+
+func (n *Node) ValueOfOrder() int {
+	return n.Height()
+}
