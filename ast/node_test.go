@@ -216,3 +216,53 @@ func TestUpdateParent(t *testing.T) {
 		}
 	})
 }
+
+func TestDestroySubtree(t *testing.T) {
+	t.Run("TestDestroySubtree_no_children", func(t *testing.T) {
+		t.Parallel()
+
+		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		ast.DestroySubtree(givenRootNode)
+	})
+
+	t.Run("TestDestroySubtree_with_1_layer_children", func(t *testing.T) {
+		t.Parallel()
+
+		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenChildrenNum := 18
+		for i := 0; i < givenChildrenNum; i++ {
+			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: givenRootNode, IdxToParent: i}, "child-label", "child-value")
+		}
+		ast.DestroySubtree(givenRootNode)
+		if len(givenRootNode.Children) != 0 {
+			t.Errorf("len(givenRootNode.Children) = %d, want 0", len(givenRootNode.Children))
+		}
+	})
+
+	t.Run("TestDestroySubtree_with_2_layers_children", func(t *testing.T) {
+		t.Parallel()
+
+		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
+		givenChildrenNum := 8
+
+		firstLayerChildren := make([]*ast.Node, givenChildrenNum)
+		for i := 0; i < givenChildrenNum; i++ {
+			childNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenRootNode, IdxToParent: i}, "child-label", "child-value")
+			firstLayerChildren[i] = childNode
+			for j := 0; j < givenChildrenNum; j++ {
+				_, _ = ast.NewNode(ast.NodeParentInfo{Parent: childNode, IdxToParent: j}, "grandchild-label", "grandchild-value")
+			}
+		}
+		ast.DestroySubtree(givenRootNode)
+
+		if len(givenRootNode.Children) != 0 {
+			t.Errorf("len(givenRootNode.Children) = %d, want 0", len(givenRootNode.Children))
+		}
+
+		for _, firstLayerChild := range firstLayerChildren {
+			if len(firstLayerChild.Children) != 0 {
+				t.Errorf("len(firstLayerChild.Children) = %d, want 0", len(firstLayerChild.Children))
+			}
+		}
+	})
+}
