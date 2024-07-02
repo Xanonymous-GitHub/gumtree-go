@@ -14,7 +14,7 @@ func (t integerQueueType) ValueOfOrder() integerQueueType {
 
 func TestPriorityQueue_Front(t *testing.T) {
 	logger := slog.Logger{}
-	pq := datastructures.NewPriorityQueue[integerQueueType, integerQueueType](logger)
+	pq := datastructures.NewPriorityQueue[integerQueueType](logger)
 
 	t.Run("TestPriorityQueue_Front", func(t *testing.T) {
 		pq.Push(1)
@@ -27,7 +27,7 @@ func TestPriorityQueue_Front(t *testing.T) {
 
 func TestPriorityQueue_Pop(t *testing.T) {
 	logger := slog.Logger{}
-	pq := datastructures.NewPriorityQueue[integerQueueType, integerQueueType](logger)
+	pq := datastructures.NewPriorityQueue[integerQueueType](logger)
 
 	t.Run("TestPriorityQueue_Pop", func(t *testing.T) {
 		pq.Push(1)
@@ -41,7 +41,7 @@ func TestPriorityQueue_Pop(t *testing.T) {
 
 func TestPriorityQueue_Push(t *testing.T) {
 	logger := slog.Logger{}
-	pq := datastructures.NewPriorityQueue[integerQueueType, integerQueueType](logger)
+	pq := datastructures.NewPriorityQueue[integerQueueType](logger)
 
 	t.Run("TestPriorityQueue_Push", func(t *testing.T) {
 		pq.Push(1)
