@@ -61,7 +61,7 @@ func (a *astConcrete) Add(parent *Node, i int, label NodeLabelType, value NodeVa
 }
 
 func (a *astConcrete) Move(n, newParent *Node, i int) error {
-	return UpdateParent(n, NodeParentInfo{Parent: newParent, IdxToParent: i})
+	return n.UpdateParent(NodeParentInfo{Parent: newParent, IdxToParent: i})
 }
 
 func (a *astConcrete) Delete(n *Node) error {
@@ -71,7 +71,7 @@ func (a *astConcrete) Delete(n *Node) error {
 		return fmt.Errorf(msg)
 	}
 
-	DestroySubtree(n)
+	n.DestroySubtree()
 	delete(a.nodes, n.id)
 	return nil
 }

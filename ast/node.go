@@ -43,7 +43,7 @@ func NewNode(parentInfo NodeParentInfo, label NodeLabelType, value NodeValueType
 		idxToParent: -1,
 	}
 
-	err = UpdateParent(&newNode, parentInfo)
+	err = newNode.UpdateParent(parentInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func NewNode(parentInfo NodeParentInfo, label NodeLabelType, value NodeValueType
 	return &newNode, nil
 }
 
-func UpdateParent(n *Node, newParentInfo NodeParentInfo) error {
+func (n *Node) UpdateParent(newParentInfo NodeParentInfo) error {
 	if newParentInfo.Parent != nil {
 		if newParentInfo.IdxToParent < 0 {
 			return fmt.Errorf("IdxToParent should not be negative when Parent is not nil")
@@ -75,13 +75,13 @@ func UpdateParent(n *Node, newParentInfo NodeParentInfo) error {
 	return nil
 }
 
-func DestroySubtree(n *Node) {
+func (n *Node) DestroySubtree() {
 	if n == nil {
 		panic("destroying node is nil")
 	}
 
 	for _, child := range n.Children {
-		DestroySubtree(child)
+		child.DestroySubtree()
 		delete(n.Children, child.idxToParent)
 	}
 }

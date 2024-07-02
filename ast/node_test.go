@@ -61,7 +61,7 @@ func TestUpdateParent(t *testing.T) {
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: givenParentNode2, IdxToParent: givenNewIdxToParent}
 
-		err := ast.UpdateParent(givenTargetNode, givenNewParentInfo)
+		err := givenTargetNode.UpdateParent(givenNewParentInfo)
 		if err != nil {
 			t.Errorf("error updating parent: %v", err)
 		}
@@ -88,7 +88,7 @@ func TestUpdateParent(t *testing.T) {
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: nil, IdxToParent: givenNewIdxToParent}
 
-		err := ast.UpdateParent(givenTargetNode, givenNewParentInfo)
+		err := givenTargetNode.UpdateParent(givenNewParentInfo)
 		if err != nil {
 			t.Errorf("error updating parent: %v", err)
 		}
@@ -112,7 +112,7 @@ func TestUpdateParent(t *testing.T) {
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenNewIdxToParent}
 
-		err := ast.UpdateParent(givenTargetNode, givenNewParentInfo)
+		err := givenTargetNode.UpdateParent(givenNewParentInfo)
 		if err != nil {
 			t.Errorf("error updating parent: %v", err)
 		}
@@ -135,7 +135,7 @@ func TestUpdateParent(t *testing.T) {
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: nil, IdxToParent: givenNewIdxToParent}
 
-		err := ast.UpdateParent(givenTargetNode, givenNewParentInfo)
+		err := givenTargetNode.UpdateParent(givenNewParentInfo)
 		if err != nil {
 			t.Errorf("error updating parent: %v", err)
 		}
@@ -158,7 +158,7 @@ func TestUpdateParent(t *testing.T) {
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: givenParentNode2, IdxToParent: givenOccupiedIdxOfParent2}
 
-		err := ast.UpdateParent(givenTargetNode, givenNewParentInfo)
+		err := givenTargetNode.UpdateParent(givenNewParentInfo)
 		if err == nil {
 			t.Errorf("Expect error happened")
 		}
@@ -184,7 +184,7 @@ func TestUpdateParent(t *testing.T) {
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: nil, IdxToParent: givenNewIdxToParent}
 
-		err := ast.UpdateParent(givenTargetNode, givenNewParentInfo)
+		err := givenTargetNode.UpdateParent(givenNewParentInfo)
 		if err == nil {
 			t.Errorf("Expect error happened")
 		}
@@ -208,7 +208,7 @@ func TestUpdateParent(t *testing.T) {
 		givenTargetNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: givenOldIdxToParent}, "target-label", "target-value")
 		givenNewParentInfo := ast.NodeParentInfo{Parent: givenParentNode1, IdxToParent: givenNewIdxToParent}
 
-		err := ast.UpdateParent(givenTargetNode, givenNewParentInfo)
+		err := givenTargetNode.UpdateParent(givenNewParentInfo)
 		if err == nil {
 			t.Errorf("Expect error happened")
 		}
@@ -223,7 +223,7 @@ func TestDestroySubtree(t *testing.T) {
 		t.Parallel()
 
 		givenRootNode, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "root-label", "root-value")
-		ast.DestroySubtree(givenRootNode)
+		givenRootNode.DestroySubtree()
 	})
 
 	t.Run("TestDestroySubtree_with_1_layer_children", func(t *testing.T) {
@@ -234,7 +234,7 @@ func TestDestroySubtree(t *testing.T) {
 		for i := 0; i < givenChildrenNum; i++ {
 			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: givenRootNode, IdxToParent: i}, "child-label", "child-value")
 		}
-		ast.DestroySubtree(givenRootNode)
+		givenRootNode.DestroySubtree()
 		if len(givenRootNode.Children) != 0 {
 			t.Errorf("len(givenRootNode.Children) = %d, want 0", len(givenRootNode.Children))
 		}
@@ -254,7 +254,7 @@ func TestDestroySubtree(t *testing.T) {
 				_, _ = ast.NewNode(ast.NodeParentInfo{Parent: childNode, IdxToParent: j}, "grandchild-label", "grandchild-value")
 			}
 		}
-		ast.DestroySubtree(givenRootNode)
+		givenRootNode.DestroySubtree()
 
 		if len(givenRootNode.Children) != 0 {
 			t.Errorf("len(givenRootNode.Children) = %d, want 0", len(givenRootNode.Children))
