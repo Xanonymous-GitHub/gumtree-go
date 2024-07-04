@@ -3,6 +3,8 @@ package ast
 import (
 	"fmt"
 	"github.com/google/uuid"
+	"golang.org/x/exp/maps"
+	"sort"
 )
 
 type Node struct {
@@ -112,4 +114,41 @@ func (n *Node) Degree() int {
 
 func (n *Node) ValueOfOrder() int {
 	return n.Height()
+}
+
+// Isomorphic returns true if the Node is isomorphic to the other Node.
+func (n *Node) Isomorphic(other *Node) bool {
+	if n == nil || other == nil {
+		return false
+	}
+
+	if n.Degree() != other.Degree() {
+		return false
+	}
+
+	if n.Label != other.Label || n.Value != other.Value {
+		return false
+	}
+
+	childrenIdxes := maps.Keys(n.Children)
+	otherChildrenIdxes := maps.Keys(other.Children)
+	sort.Ints(childrenIdxes)
+	sort.Ints(otherChildrenIdxes)
+
+	// Impossible, since we've compared the degrees of the two nodes.
+	if len(childrenIdxes) != len(otherChildrenIdxes) {
+		panic("the two nodes have same degrees, but different number of children")
+	}
+
+	for i := 0; i < len(childrenIdxes); i++ {
+		if childrenIdxes[i] != otherChildrenIdxes[i] {
+			return false
+		}
+
+		if !n.Children[childrenIdxes[i]].Isomorphic(other.Children[otherChildrenIdxes[i]]) {
+			return false
+		}
+	}
+
+	return true
 }

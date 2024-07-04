@@ -356,3 +356,151 @@ func TestNode_Degree(t *testing.T) {
 		}
 	})
 }
+
+func TestNode_Isomorphic(t *testing.T) {
+	t.Parallel()
+
+	t.Run("two root nodes, no children, different labels and values", func(t *testing.T) {
+		root1, _ := ast.NewOrphanNode()
+		root2, _ := ast.NewNode(ast.NodeParentInfo{Parent: nil, IdxToParent: -1}, "diff-label", "diff-value")
+		if root1.Isomorphic(root2) {
+			t.Errorf("expected false, got true")
+		}
+	})
+
+	t.Run("two root nodes, no children, same labels and values", func(t *testing.T) {
+		root1, _ := ast.NewOrphanNode()
+		root2, _ := ast.NewOrphanNode()
+		if !root1.Isomorphic(root2) {
+			t.Errorf("expected true, got false")
+		}
+	})
+
+	t.Run("same children structure, 1 layer, one of them have different labels and values", func(t *testing.T) {
+		root1, _ := ast.NewOrphanNode()
+		root2, _ := ast.NewOrphanNode()
+
+		const givenSameLabel ast.NodeLabelType = "same-label"
+		const givenSameValue ast.NodeValueType = "same-value"
+
+		for i := 0; i < 5; i++ {
+			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: root1, IdxToParent: i}, givenSameLabel, givenSameValue)
+
+			if i == 3 {
+				_, _ = ast.NewNode(ast.NodeParentInfo{Parent: root2, IdxToParent: i}, "diff-label", "diff-value")
+			} else {
+				_, _ = ast.NewNode(ast.NodeParentInfo{Parent: root2, IdxToParent: i}, givenSameLabel, givenSameValue)
+			}
+		}
+		if root1.Isomorphic(root2) {
+			t.Errorf("expected false, got true")
+		}
+	})
+
+	t.Run("same children structure, 1 layer, same labels and values", func(t *testing.T) {
+		root1, _ := ast.NewOrphanNode()
+		root2, _ := ast.NewOrphanNode()
+
+		const givenSameLabel ast.NodeLabelType = "same-label"
+		const givenSameValue ast.NodeValueType = "same-value"
+
+		for i := 0; i < 5; i++ {
+			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: root1, IdxToParent: i}, givenSameLabel, givenSameValue)
+			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: root2, IdxToParent: i}, givenSameLabel, givenSameValue)
+		}
+		if !root1.Isomorphic(root2) {
+			t.Errorf("expected true, got false")
+		}
+	})
+
+	t.Run("same children structure, 2 layers, one of them have different labels and values", func(t *testing.T) {
+		root1, _ := ast.NewOrphanNode()
+		root2, _ := ast.NewOrphanNode()
+
+		const givenSameLabel ast.NodeLabelType = "same-label"
+		const givenSameValue ast.NodeValueType = "same-value"
+
+		for i := 0; i < 5; i++ {
+			child1, _ := ast.NewNode(ast.NodeParentInfo{Parent: root1, IdxToParent: i}, givenSameLabel, givenSameValue)
+			child2, _ := ast.NewNode(ast.NodeParentInfo{Parent: root2, IdxToParent: i}, givenSameLabel, givenSameValue)
+
+			for j := 0; j < 5; j++ {
+				_, _ = ast.NewNode(ast.NodeParentInfo{Parent: child1, IdxToParent: j}, givenSameLabel, givenSameValue)
+
+				if j == 3 {
+					_, _ = ast.NewNode(ast.NodeParentInfo{Parent: child2, IdxToParent: j}, "diff-label", "diff-value")
+				} else {
+					_, _ = ast.NewNode(ast.NodeParentInfo{Parent: child2, IdxToParent: j}, givenSameLabel, givenSameValue)
+				}
+			}
+		}
+		if root1.Isomorphic(root2) {
+			t.Errorf("expected false, got true")
+		}
+	})
+
+	t.Run("same children structure, 2 layers, same labels and values", func(t *testing.T) {
+		root1, _ := ast.NewOrphanNode()
+		root2, _ := ast.NewOrphanNode()
+
+		const givenSameLabel ast.NodeLabelType = "same-label"
+		const givenSameValue ast.NodeValueType = "same-value"
+
+		for i := 0; i < 5; i++ {
+			child1, _ := ast.NewNode(ast.NodeParentInfo{Parent: root1, IdxToParent: i}, givenSameLabel, givenSameValue)
+			child2, _ := ast.NewNode(ast.NodeParentInfo{Parent: root2, IdxToParent: i}, givenSameLabel, givenSameValue)
+
+			for j := 0; j < 5; j++ {
+				_, _ = ast.NewNode(ast.NodeParentInfo{Parent: child1, IdxToParent: j}, givenSameLabel, givenSameValue)
+				_, _ = ast.NewNode(ast.NodeParentInfo{Parent: child2, IdxToParent: j}, givenSameLabel, givenSameValue)
+			}
+		}
+		if !root1.Isomorphic(root2) {
+			t.Errorf("expected true, got false")
+		}
+	})
+
+	t.Run("different children structure, 1 layer", func(t *testing.T) {
+		root1, _ := ast.NewOrphanNode()
+		root2, _ := ast.NewOrphanNode()
+
+		const givenSameLabel ast.NodeLabelType = "same-label"
+		const givenSameValue ast.NodeValueType = "same-value"
+		const givenRoot1ChildrenNum = 5
+		const givenRoot2ChildrenNum = 6
+
+		for i := 0; i < givenRoot1ChildrenNum; i++ {
+			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: root1, IdxToParent: i}, givenSameLabel, givenSameValue)
+		}
+		for i := 0; i < givenRoot2ChildrenNum; i++ {
+			_, _ = ast.NewNode(ast.NodeParentInfo{Parent: root2, IdxToParent: i}, givenSameLabel, givenSameValue)
+		}
+
+		if root1.Isomorphic(root2) {
+			t.Errorf("expected false, got true")
+		}
+	})
+
+	t.Run("different children structure, layer-2 is different", func(t *testing.T) {
+		root1, _ := ast.NewOrphanNode()
+		root2, _ := ast.NewOrphanNode()
+
+		const givenSameLabel ast.NodeLabelType = "same-label"
+		const givenSameValue ast.NodeValueType = "same-value"
+
+		for i := 0; i < 5; i++ {
+			child1, _ := ast.NewNode(ast.NodeParentInfo{Parent: root1, IdxToParent: i}, givenSameLabel, givenSameValue)
+			child2, _ := ast.NewNode(ast.NodeParentInfo{Parent: root2, IdxToParent: i}, givenSameLabel, givenSameValue)
+
+			for j := 0; j < 5; j++ {
+				_, _ = ast.NewNode(ast.NodeParentInfo{Parent: child1, IdxToParent: j}, givenSameLabel, givenSameValue)
+			}
+			for j := 0; j < 6; j++ {
+				_, _ = ast.NewNode(ast.NodeParentInfo{Parent: child2, IdxToParent: j}, givenSameLabel, givenSameValue)
+			}
+		}
+		if root1.Isomorphic(root2) {
+			t.Errorf("expected false, got true")
+		}
+	})
+}
