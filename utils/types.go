@@ -6,3 +6,8 @@ import "cmp"
 type AllowOrdered[P cmp.Ordered] interface {
 	ValueOfOrder() P
 }
+
+// Equatable is an extension interface for types that designed to be compared.
+type Equatable interface {
+	IsEqualTo(other interface{}) bool
+}
