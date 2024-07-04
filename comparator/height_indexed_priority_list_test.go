@@ -210,8 +210,8 @@ func TestHeightIndexedPriorityList_PeekMax(t *testing.T) {
 
 	t.Run("Test peeking from an empty list", func(t *testing.T) {
 		list := comparator.NewHeightIndexedPriorityList(slog.Logger{})
-		if height := list.PeekMax(); height != 0 {
-			t.Errorf("Expected 0, got %d", height)
+		if height := list.PeekMax(); height != -1 {
+			t.Errorf("Expected -1, got %d", height)
 		}
 	})
 

@@ -45,7 +45,7 @@ func (h *heightIndexedPriorityList) Push(n *ast.Node) {
 
 func (h *heightIndexedPriorityList) PeekMax() int {
 	if len(h.nodes) == 0 {
-		return 0
+		return -1
 	}
 
 	heights := maps.Keys(h.nodes)
