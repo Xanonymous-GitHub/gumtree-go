@@ -29,6 +29,10 @@ type AST interface {
 	// Delete deletes a node `n` from the AST.
 	Delete(n *Node) error
 
+	// Root returns the root node of the AST.
+	// If the AST is empty, then it returns nil.
+	Root() *Node
+
 	// UpdateValue updates the label of a node `n` to `newValue`.
 	UpdateValue(n *Node, newValue NodeValueType) error
 
@@ -39,6 +43,9 @@ type AST interface {
 type astConcrete struct {
 	// nodes is a map of node IDs to nodes.
 	nodes map[string]*Node
+
+	// root is the root node of the AST.
+	root *Node
 
 	// logger is the logger of the AST.
 	logger slog.Logger
@@ -54,6 +61,14 @@ func (a *astConcrete) Add(parent *Node, i int, label NodeLabelType, value NodeVa
 		msg := "newNode is nil"
 		a.logger.Error(msg)
 		return nil, fmt.Errorf(msg)
+	}
+	if newNode.Parent == nil {
+		if a.root != nil {
+			msg := "the root node already exists in the AST"
+			a.logger.Error(msg)
+			return nil, fmt.Errorf(msg)
+		}
+		a.root = newNode
 	}
 
 	a.nodes[newNode.id] = newNode
@@ -74,6 +89,10 @@ func (a *astConcrete) Delete(n *Node) error {
 	n.DestroySubtree()
 	delete(a.nodes, n.id)
 	return nil
+}
+
+func (a *astConcrete) Root() *Node {
+	return a.root
 }
 
 func (a *astConcrete) UpdateValue(n *Node, newValue NodeValueType) error {
@@ -102,6 +121,7 @@ func (a *astConcrete) UpdateLabel(n *Node, newLabel NodeLabelType) error {
 func NewAST(logger slog.Logger) AST {
 	return &astConcrete{
 		nodes:  make(map[string]*Node),
+		root:   nil,
 		logger: logger,
 	}
 }
