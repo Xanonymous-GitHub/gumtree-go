@@ -40,7 +40,7 @@ type AST interface {
 	UpdateLabel(n *Node, newLabel NodeLabelType) error
 
 	// MakeHashMemo creates a new hash memo for the entire AST.
-	MakeHashMemo() *NodeHashMemo
+	MakeHashMemo() NodeHashMemo
 }
 
 type astConcrete struct {
@@ -74,8 +74,8 @@ func (a *astConcrete) Add(parent *Node, i int, label NodeLabelType, value NodeVa
 		a.root = newNode
 	}
 
-	a.nodes[newNode.id] = newNode
-	return a.nodes[newNode.id], nil
+	a.nodes[newNode.Id] = newNode
+	return a.nodes[newNode.Id], nil
 }
 
 func (a *astConcrete) Move(n, newParent *Node, i int) error {
@@ -90,7 +90,7 @@ func (a *astConcrete) Delete(n *Node) error {
 	}
 
 	n.DestroySubtree()
-	delete(a.nodes, n.id)
+	delete(a.nodes, n.Id)
 	return nil
 }
 
@@ -120,14 +120,14 @@ func (a *astConcrete) UpdateLabel(n *Node, newLabel NodeLabelType) error {
 	return nil
 }
 
-func (a *astConcrete) MakeHashMemo() *NodeHashMemo {
+func (a *astConcrete) MakeHashMemo() NodeHashMemo {
 	if a.root == nil {
 		return nil
 	}
 
 	memo := make(NodeHashMemo)
 	_ = a.root.HashValue(&memo)
-	return &memo
+	return memo
 }
 
 // NewAST creates a new AST.

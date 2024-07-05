@@ -17,9 +17,11 @@ type Node struct {
 	Value       NodeValueType
 	Parent      *Node
 	Children    map[int]*Node
-	id          NodeIdType
+	Id          NodeIdType
 	idxToParent int
 }
+
+type NodeHashMemo map[NodeIdType]uint64
 
 type NodeParentInfo struct {
 	// The Parent of a Node.
@@ -46,7 +48,7 @@ func NewNode(parentInfo NodeParentInfo, label NodeLabelType, value NodeValueType
 		Value:       value,
 		Parent:      nil,
 		Children:    make(map[int]*Node),
-		id:          newIdStr,
+		Id:          newIdStr,
 		idxToParent: -1,
 	}
 
@@ -121,6 +123,14 @@ func (n *Node) ValueOfOrder() int {
 	return n.Height()
 }
 
+func (n *Node) OrderedChildren() []*Node {
+	children := maps.Values(n.Children)
+	sort.Slice(children, func(i, j int) bool {
+		return children[i].idxToParent < children[j].idxToParent
+	})
+	return children
+}
+
 // Isomorphic returns true if the Node is isomorphic to the other Node.
 func (n *Node) Isomorphic(other *Node) bool {
 	if n == nil || other == nil {
@@ -138,15 +148,12 @@ func (n *Node) HashValue(memo *NodeHashMemo) uint64 {
 		if memo != nil {
 			lock.Lock()
 			defer lock.Unlock()
-			(*memo)[n.id] = propertyHash
+			(*memo)[n.Id] = propertyHash
 		}
 		return propertyHash
 	}
 
-	children := maps.Values(n.Children)
-	sort.Slice(children, func(i, j int) bool {
-		return children[i].idxToParent < children[j].idxToParent
-	})
+	children := n.OrderedChildren()
 
 	var combinedChildrenHash xxhash.Digest
 	_, _ = combinedChildrenHash.WriteString(strconv.FormatUint(propertyHash, 10))
@@ -160,7 +167,7 @@ func (n *Node) HashValue(memo *NodeHashMemo) uint64 {
 	if memo != nil {
 		lock.Lock()
 		defer lock.Unlock()
-		(*memo)[n.id] = result
+		(*memo)[n.Id] = result
 	}
 	return result
 }
