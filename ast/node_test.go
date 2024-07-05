@@ -513,17 +513,17 @@ func TestNode_HashValue(t *testing.T) {
 		root, _ := ast.NewOrphanNode()
 		sameRoot, _ := ast.NewOrphanNode()
 
-		hashValue := root.HashValue()
+		hashValue := root.HashValue(nil)
 		if hashValue == 0 {
-			t.Errorf("root.HashValue() = 0, want non-zero")
+			t.Errorf("root.HashValue(nil) = 0, want non-zero")
 		}
 
 		if hashValue != 0x4c88320d6fc1875a {
-			t.Errorf("root.HashValue() = %d, want 0x4c88320d6fc1875a", hashValue)
+			t.Errorf("root.HashValue(nil) = %d, want 0x4c88320d6fc1875a", hashValue)
 		}
 
-		if hashValue != sameRoot.HashValue() {
-			t.Errorf("root.HashValue() = %d, want %d", hashValue, sameRoot.HashValue())
+		if hashValue != sameRoot.HashValue(nil) {
+			t.Errorf("root.HashValue(nil) = %d, want %d", hashValue, sameRoot.HashValue(nil))
 		}
 	})
 
@@ -545,21 +545,21 @@ func TestNode_HashValue(t *testing.T) {
 			)
 		}
 
-		hashValueFirst := root.HashValue()
+		hashValueFirst := root.HashValue(nil)
 		if hashValueFirst == 0 {
-			t.Errorf("root.HashValue() = 0, want non-zero")
+			t.Errorf("root.HashValue(nil) = 0, want non-zero")
 		}
 
 		hasConsistencyTry := 1000
 		for i := 0; i < hasConsistencyTry; i++ {
-			hashValue := root.HashValue()
+			hashValue := root.HashValue(nil)
 			if hashValue != hashValueFirst {
-				t.Errorf("root.HashValue() = %d, want %d", hashValue, hashValueFirst)
+				t.Errorf("root.HashValue(nil) = %d, want %d", hashValue, hashValueFirst)
 			}
 		}
 
-		if hashValueFirst != sameRoot.HashValue() {
-			t.Errorf("root.HashValue() = %d, want %d", hashValueFirst, sameRoot.HashValue())
+		if hashValueFirst != sameRoot.HashValue(nil) {
+			t.Errorf("root.HashValue(nil) = %d, want %d", hashValueFirst, sameRoot.HashValue(nil))
 		}
 	})
 
@@ -595,21 +595,21 @@ func TestNode_HashValue(t *testing.T) {
 			}
 		}
 
-		hashValueFirst := root.HashValue()
+		hashValueFirst := root.HashValue(nil)
 		if hashValueFirst == 0 {
-			t.Errorf("root.HashValue() = 0, want non-zero")
+			t.Errorf("root.HashValue(nil) = 0, want non-zero")
 		}
 
 		hasConsistencyTry := 1000
 		for i := 0; i < hasConsistencyTry; i++ {
-			hashValue := root.HashValue()
+			hashValue := root.HashValue(nil)
 			if hashValue != hashValueFirst {
-				t.Errorf("root.HashValue() = %d, want %d", hashValue, hashValueFirst)
+				t.Errorf("root.HashValue(nil) = %d, want %d", hashValue, hashValueFirst)
 			}
 		}
 
-		if hashValueFirst != sameRoot.HashValue() {
-			t.Errorf("root.HashValue() = %d, want %d", hashValueFirst, sameRoot.HashValue())
+		if hashValueFirst != sameRoot.HashValue(nil) {
+			t.Errorf("root.HashValue(nil) = %d, want %d", hashValueFirst, sameRoot.HashValue(nil))
 		}
 	})
 }

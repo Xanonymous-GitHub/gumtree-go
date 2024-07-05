@@ -7,7 +7,10 @@ import (
 	"golang.org/x/exp/maps"
 	"sort"
 	"strconv"
+	"sync"
 )
+
+var lock = sync.RWMutex{}
 
 type Node struct {
 	Label       NodeLabelType
@@ -124,42 +127,19 @@ func (n *Node) Isomorphic(other *Node) bool {
 		return false
 	}
 
-	if n.Degree() != other.Degree() {
-		return false
-	}
-
-	if n.Label != other.Label || n.Value != other.Value {
-		return false
-	}
-
-	childrenIdxes := maps.Keys(n.Children)
-	otherChildrenIdxes := maps.Keys(other.Children)
-	sort.Ints(childrenIdxes)
-	sort.Ints(otherChildrenIdxes)
-
-	// Impossible, since we've compared the degrees of the two nodes.
-	if len(childrenIdxes) != len(otherChildrenIdxes) {
-		panic("the two nodes have same degrees, but different number of children")
-	}
-
-	for i := 0; i < len(childrenIdxes); i++ {
-		if childrenIdxes[i] != otherChildrenIdxes[i] {
-			return false
-		}
-
-		if !n.Children[childrenIdxes[i]].Isomorphic(other.Children[otherChildrenIdxes[i]]) {
-			return false
-		}
-	}
-
-	return true
+	return n.HashValue(nil) == other.HashValue(nil)
 }
 
-func (n *Node) HashValue() uint64 {
+func (n *Node) HashValue(memo *map[uint64]*Node) uint64 {
 	propertyStr := fmt.Sprintf("<%s>[%s]<", n.Label, n.Value)
 	propertyHash := xxhash.Sum64String(propertyStr)
 
 	if len(n.Children) == 0 {
+		if memo != nil {
+			lock.Lock()
+			defer lock.Unlock()
+			(*memo)[propertyHash] = n
+		}
 		return propertyHash
 	}
 
@@ -172,9 +152,15 @@ func (n *Node) HashValue() uint64 {
 	_, _ = combinedChildrenHash.WriteString(strconv.FormatUint(propertyHash, 10))
 
 	for _, child := range children {
-		childHash := child.HashValue()
+		childHash := child.HashValue(memo)
 		_, _ = combinedChildrenHash.WriteString(strconv.FormatUint(childHash, 10))
 	}
 
-	return combinedChildrenHash.Sum64()
+	result := combinedChildrenHash.Sum64()
+	if memo != nil {
+		lock.Lock()
+		defer lock.Unlock()
+		(*memo)[result] = n
+	}
+	return result
 }
