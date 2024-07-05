@@ -2,9 +2,11 @@ package ast
 
 import (
 	"fmt"
+	"github.com/cespare/xxhash/v2"
 	"github.com/google/uuid"
 	"golang.org/x/exp/maps"
 	"sort"
+	"strconv"
 )
 
 type Node struct {
@@ -151,4 +153,28 @@ func (n *Node) Isomorphic(other *Node) bool {
 	}
 
 	return true
+}
+
+func (n *Node) HashValue() uint64 {
+	propertyStr := fmt.Sprintf("<%s>[%s]<", n.Label, n.Value)
+	propertyHash := xxhash.Sum64String(propertyStr)
+
+	if len(n.Children) == 0 {
+		return propertyHash
+	}
+
+	children := maps.Values(n.Children)
+	sort.Slice(children, func(i, j int) bool {
+		return children[i].idxToParent < children[j].idxToParent
+	})
+
+	var combinedChildrenHash xxhash.Digest
+	_, _ = combinedChildrenHash.WriteString(strconv.FormatUint(propertyHash, 10))
+
+	for _, child := range children {
+		childHash := child.HashValue()
+		_, _ = combinedChildrenHash.WriteString(strconv.FormatUint(childHash, 10))
+	}
+
+	return combinedChildrenHash.Sum64()
 }

@@ -1,6 +1,7 @@
 package ast_test
 
 import (
+	"fmt"
 	"github.com/Xanonymous-GitHub/gumtree-go/ast"
 	"math/rand/v2"
 	"testing"
@@ -501,6 +502,114 @@ func TestNode_Isomorphic(t *testing.T) {
 		}
 		if root1.Isomorphic(root2) {
 			t.Errorf("expected false, got true")
+		}
+	})
+}
+
+func TestNode_HashValue(t *testing.T) {
+	t.Parallel()
+
+	t.Run("TestNode_HashValue_no_children", func(t *testing.T) {
+		root, _ := ast.NewOrphanNode()
+		sameRoot, _ := ast.NewOrphanNode()
+
+		hashValue := root.HashValue()
+		if hashValue == 0 {
+			t.Errorf("root.HashValue() = 0, want non-zero")
+		}
+
+		if hashValue != 0x4c88320d6fc1875a {
+			t.Errorf("root.HashValue() = %d, want 0x4c88320d6fc1875a", hashValue)
+		}
+
+		if hashValue != sameRoot.HashValue() {
+			t.Errorf("root.HashValue() = %d, want %d", hashValue, sameRoot.HashValue())
+		}
+	})
+
+	t.Run("TestNode_HashValue_with_1_layer_children", func(t *testing.T) {
+		root, _ := ast.NewOrphanNode()
+		sameRoot, _ := ast.NewOrphanNode()
+		for i := 0; i < 5; i++ {
+			_, _ = ast.NewNode(
+				ast.NodeParentInfo{Parent: root, IdxToParent: i},
+				ast.NodeLabelType(fmt.Sprintf("child-label-%d", i)),
+				ast.NodeValueType(fmt.Sprintf("child-value-%d", i)),
+			)
+		}
+		for i := 0; i < 5; i++ {
+			_, _ = ast.NewNode(
+				ast.NodeParentInfo{Parent: sameRoot, IdxToParent: i},
+				ast.NodeLabelType(fmt.Sprintf("child-label-%d", i)),
+				ast.NodeValueType(fmt.Sprintf("child-value-%d", i)),
+			)
+		}
+
+		hashValueFirst := root.HashValue()
+		if hashValueFirst == 0 {
+			t.Errorf("root.HashValue() = 0, want non-zero")
+		}
+
+		hasConsistencyTry := 1000
+		for i := 0; i < hasConsistencyTry; i++ {
+			hashValue := root.HashValue()
+			if hashValue != hashValueFirst {
+				t.Errorf("root.HashValue() = %d, want %d", hashValue, hashValueFirst)
+			}
+		}
+
+		if hashValueFirst != sameRoot.HashValue() {
+			t.Errorf("root.HashValue() = %d, want %d", hashValueFirst, sameRoot.HashValue())
+		}
+	})
+
+	t.Run("TestNode_HashValue_with_2_layers_children", func(t *testing.T) {
+		root, _ := ast.NewOrphanNode()
+		sameRoot, _ := ast.NewOrphanNode()
+		for i := 0; i < 5; i++ {
+			child, _ := ast.NewNode(
+				ast.NodeParentInfo{Parent: root, IdxToParent: i},
+				ast.NodeLabelType(fmt.Sprintf("child-label-%d", i)),
+				ast.NodeValueType(fmt.Sprintf("child-value-%d", i)),
+			)
+			for j := 0; j < 5; j++ {
+				_, _ = ast.NewNode(
+					ast.NodeParentInfo{Parent: child, IdxToParent: j},
+					ast.NodeLabelType(fmt.Sprintf("grandchild-label-%d", j)),
+					ast.NodeValueType(fmt.Sprintf("grandchild-value-%d", j)),
+				)
+			}
+		}
+		for i := 0; i < 5; i++ {
+			child, _ := ast.NewNode(
+				ast.NodeParentInfo{Parent: sameRoot, IdxToParent: i},
+				ast.NodeLabelType(fmt.Sprintf("child-label-%d", i)),
+				ast.NodeValueType(fmt.Sprintf("child-value-%d", i)),
+			)
+			for j := 0; j < 5; j++ {
+				_, _ = ast.NewNode(
+					ast.NodeParentInfo{Parent: child, IdxToParent: j},
+					ast.NodeLabelType(fmt.Sprintf("grandchild-label-%d", j)),
+					ast.NodeValueType(fmt.Sprintf("grandchild-value-%d", j)),
+				)
+			}
+		}
+
+		hashValueFirst := root.HashValue()
+		if hashValueFirst == 0 {
+			t.Errorf("root.HashValue() = 0, want non-zero")
+		}
+
+		hasConsistencyTry := 1000
+		for i := 0; i < hasConsistencyTry; i++ {
+			hashValue := root.HashValue()
+			if hashValue != hashValueFirst {
+				t.Errorf("root.HashValue() = %d, want %d", hashValue, hashValueFirst)
+			}
+		}
+
+		if hashValueFirst != sameRoot.HashValue() {
+			t.Errorf("root.HashValue() = %d, want %d", hashValueFirst, sameRoot.HashValue())
 		}
 	})
 }
