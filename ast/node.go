@@ -17,7 +17,7 @@ type Node struct {
 	Value       NodeValueType
 	Parent      *Node
 	Children    map[int]*Node
-	id          string
+	id          NodeIdType
 	idxToParent int
 }
 
@@ -31,12 +31,12 @@ type NodeParentInfo struct {
 }
 
 func NewNode(parentInfo NodeParentInfo, label NodeLabelType, value NodeValueType) (*Node, error) {
-	newId, err := uuid.NewRandom()
+	newUUId, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
 	}
 
-	newIdStr := newId.String()
+	newIdStr := NodeIdType(newUUId.String())
 	if newIdStr == "" {
 		return nil, fmt.Errorf("newIdStr is empty during node creation")
 	}
@@ -130,7 +130,7 @@ func (n *Node) Isomorphic(other *Node) bool {
 	return n.HashValue(nil) == other.HashValue(nil)
 }
 
-func (n *Node) HashValue(memo *map[uint64]*Node) uint64 {
+func (n *Node) HashValue(memo *NodeHashMemo) uint64 {
 	propertyStr := fmt.Sprintf("<%s>[%s]<", n.Label, n.Value)
 	propertyHash := xxhash.Sum64String(propertyStr)
 
@@ -138,7 +138,7 @@ func (n *Node) HashValue(memo *map[uint64]*Node) uint64 {
 		if memo != nil {
 			lock.Lock()
 			defer lock.Unlock()
-			(*memo)[propertyHash] = n
+			(*memo)[n.id] = propertyHash
 		}
 		return propertyHash
 	}
@@ -160,7 +160,7 @@ func (n *Node) HashValue(memo *map[uint64]*Node) uint64 {
 	if memo != nil {
 		lock.Lock()
 		defer lock.Unlock()
-		(*memo)[result] = n
+		(*memo)[n.id] = result
 	}
 	return result
 }

@@ -38,11 +38,14 @@ type AST interface {
 
 	// UpdateLabel updates the value of a node `n` to `newLabel`.
 	UpdateLabel(n *Node, newLabel NodeLabelType) error
+
+	// MakeHashMemo creates a new hash memo for the entire AST.
+	MakeHashMemo() *NodeHashMemo
 }
 
 type astConcrete struct {
 	// nodes is a map of node IDs to nodes.
-	nodes map[string]*Node
+	nodes map[NodeIdType]*Node
 
 	// root is the root node of the AST.
 	root *Node
@@ -117,10 +120,20 @@ func (a *astConcrete) UpdateLabel(n *Node, newLabel NodeLabelType) error {
 	return nil
 }
 
+func (a *astConcrete) MakeHashMemo() *NodeHashMemo {
+	if a.root == nil {
+		return nil
+	}
+
+	memo := make(NodeHashMemo)
+	_ = a.root.HashValue(&memo)
+	return &memo
+}
+
 // NewAST creates a new AST.
 func NewAST(logger slog.Logger) AST {
 	return &astConcrete{
-		nodes:  make(map[string]*Node),
+		nodes:  make(map[NodeIdType]*Node),
 		root:   nil,
 		logger: logger,
 	}

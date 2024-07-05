@@ -1,4 +1,7 @@
 package ast
 
-type NodeLabelType string
-type NodeValueType string
+type (
+	NodeIdType    string
+	NodeLabelType string
+	NodeValueType string
+)
