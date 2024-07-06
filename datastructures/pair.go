@@ -65,6 +65,29 @@ func CrossPairOf[T comparable](collection1, collection2 []T) []Pair[T, T] {
 	return pairs
 }
 
+func PairOf[T comparable](collection1, collection2 []T) []Pair[T, T] {
+	if collection1 == nil || collection2 == nil {
+		return nil
+	}
+
+	length1 := len(collection1)
+	length2 := len(collection2)
+	if length1 == 0 || length2 == 0 {
+		return nil
+	}
+
+	if length1 != length2 {
+		return nil
+	}
+
+	pairs := make([]Pair[T, T], 0, length1)
+	for i := 0; i < length1; i++ {
+		pairs = append(pairs, NewPair(collection1[i], collection2[i]))
+	}
+
+	return pairs
+}
+
 func NewPair[A, B comparable](first A, second B) Pair[A, B] {
 	return &pair[A, B]{first, second}
 }
