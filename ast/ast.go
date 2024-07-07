@@ -41,6 +41,12 @@ type AST interface {
 
 	// MakeHashMemo creates a new hash memo for the entire AST.
 	MakeHashMemo() NodeHashMemo
+
+	// PreOrderNodes returns the nodes of the AST in pre-order.
+	PreOrderNodes() []*Node
+
+	// PostOrderNodes returns the nodes of the AST in post-order.
+	PostOrderNodes() []*Node
 }
 
 type astConcrete struct {
