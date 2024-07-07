@@ -171,3 +171,15 @@ func (n *Node) HashValue(memo *NodeHashMemo) uint64 {
 	}
 	return result
 }
+
+func (n *Node) IsEqualTo(other interface{}) bool {
+	if other == nil {
+		return false
+	}
+
+	if otherNode, ok := other.(*Node); ok {
+		return n.Label == otherNode.Label && n.Value == otherNode.Value && n.Id == otherNode.Id
+	}
+
+	return false
+}

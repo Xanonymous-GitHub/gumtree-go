@@ -84,7 +84,7 @@ func (c *comparator) topDown() {
 		}
 	}
 
-	/// TODO: Implement the dice function and the rest process of the candidateMappings.
+	c.handleCandidateMappings()
 }
 
 func NewComparator(
